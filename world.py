@@ -9,8 +9,23 @@ sys.path.insert(0, 'generators')
 import testgen
 
 class World(object):
-    def __init__(self, win):
-        self.gens = [testgen.TestGen(win.width, win.height)]
+    def __init__(self, win, seeds):
+        self.gens = [testgen.TestGen(win.width, win.height, (-75, 75)),
+                     testgen.TestGen(win.width, win.height, (0, 75)),
+                     testgen.TestGen(win.width, win.height, (75, 75)),
+                     testgen.TestGen(win.width, win.height, (-75, 0)),
+                     testgen.TestGen(win.width, win.height, (0, 0)),
+                     testgen.TestGen(win.width, win.height, (75, 0)),
+                     testgen.TestGen(win.width, win.height, (-75, -75)),
+                     testgen.TestGen(win.width, win.height, (0, -75)),
+                     testgen.TestGen(win.width, win.height, (75, -75))]
+
+        if seeds != None:
+            for g in self.gens:
+                g.seed = seeds
+        else:
+            self.create_seeds(0)
+
         self.paused = False
         #self.entities = {}
         #self.nextEntity = 0
