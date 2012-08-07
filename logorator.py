@@ -37,6 +37,10 @@ class Generator:
         while True:
             yield random.randint(a, b)
 
+    def g_float_span(self, a, b):
+        while True:
+            yield (random.random()*(b-a))+a
+
     def g_double_range(self):
         while True:
             yield random.random()
@@ -45,6 +49,12 @@ class Generator:
         return self.g_int_range(255)
 
     def g_int_const(self, c):
+        return self._g_const(c)
+
+    def g_float_const(self, c):
+        return self._g_const(c)
+
+    def _g_const(self, c):
         while True:
             yield c
 

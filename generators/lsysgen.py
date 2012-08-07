@@ -33,15 +33,16 @@ class LSysGen(logorator.Generator):
                        'green': self.g_color_range(),
                        'blue': self.g_color_range(),
                        'alpha': self.g_int_span(75, 150),
-                       'startx': self.g_int_const(10), #self.g_int_span(-10, 10),
-                       'starty': self.g_int_const(50), #self.g_int_span(-10, 10),
+                       'startx': self.g_int_const(-10), #self.g_int_span(-10, 10),
+                       'starty': self.g_int_const(-33), #self.g_int_span(-10, 10),
                        'thickness': self.g_int_span(8, 20),
-                       'angle': self.g_int_const(120),
-                       'step': self.g_int_const(3)}
+                       'angle': self.g_float_span(math.radians(90), math.radians(140)),
+                       'step': self.g_int_const(4)}
 
-        self.sierpinski_tri = lsys.LSys("F",
-                              {"F":"B-F-B", "B":"BB"},
+        self.sierpinski_tri = lsys.LSys("F-B-B",
+                              {"F":"F-B+F+B-F", "B":"BB"},
                               4)
+        print(self.sierpinski_tri.commands)
 
     def render(self, layer):
         if self.seed:
