@@ -36,7 +36,7 @@ class LSys:
         else:
             return self.evolve(n-1, self.produce(axiom, rules), rules)
 
-    def parse_command(self, state, cmd):
+    def parse_command(self, state, cmd, forward_func = None):
         """
         Parse a single command/character in the state
         Supported commands: F (forward), B (forward), + (left), - (right),
@@ -44,9 +44,15 @@ class LSys:
         """
         s = None
         if cmd == "F":
-            s = self.forward(state)
+            if forward_func == None:
+                s = self.forward(state)
+            else:
+                s = forward_func(state)
         elif cmd == "B":
-            s = self.forward(state)
+            if forward_func == None:
+                s = self.forward(state)
+            else:
+                s = forward_func(state)
         elif cmd == "+":
             s = self.left(state)
         elif cmd == "-":
@@ -59,7 +65,7 @@ class LSys:
             s = state
         return s
 
-    def parse(self, state, cmds, func = None):
+    def parse(self, state, cmds, forward_func = None):
         """
         Parse the whole string of commands in the state
 
@@ -68,10 +74,7 @@ class LSys:
         """
         s = state
         for c in cmds:
-            if func == None:
-                s = self.parse_command(s, c)
-            else:
-                s = func(s, c)
+            s = self.parse_command(s, c, forward_func)
         return s
 
     def left(self, state):

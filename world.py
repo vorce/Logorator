@@ -7,10 +7,12 @@ import os, sys, inspect
 #    sys.path.insert(0, cmd_folder)
 sys.path.insert(0, 'generators')
 import testgen
+import lsysgen
 
 class World(object):
     def __init__(self, win, seeds):
-        self.gens = [testgen.TestGen(win.width, win.height, (-75, 75)),
+        self.paused = False
+        self.gens = [lsysgen.LSysGen(win.width, win.height, (-75, 75)),
                      testgen.TestGen(win.width, win.height, (0, 75)),
                      testgen.TestGen(win.width, win.height, (75, 75)),
                      testgen.TestGen(win.width, win.height, (-75, 0)),
@@ -26,7 +28,6 @@ class World(object):
         else:
             self.create_seeds(0)
 
-        self.paused = False
         #self.entities = {}
         #self.nextEntity = 0
         #pyglet.clock.schedule_interval(self.spawnEntity, 1)
@@ -64,6 +65,7 @@ class World(object):
             for g in self.gens:
                 self.create_seed(g)
                 print("seed: {0}".format(g.dump()))
+            print("------------------")
         #for ent in self.entities.values():
             #ent.update()
 

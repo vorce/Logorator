@@ -10,8 +10,8 @@ class TestGen(logorator.Generator):
     """
 
     def __init__(self, height, width, pos):
-        self.pos = pos
         self.seed = {}
+        self.pos = pos
         self.params = {'red': self.g_color_range(),
                        'green': self.g_color_range(),
                        'blue': self.g_color_range(),

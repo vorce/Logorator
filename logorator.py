@@ -14,6 +14,7 @@ class Generator:
     Basic generator contract/interface
     """
     def __init__(self, height, width, pos):
+        self.pos = pos
         self.params = {}
         self.seed = {}
 
