@@ -13,28 +13,10 @@ class World(object):
     def __init__(self, win, seeds):
         self.paused = False
         self.win = win
-        self._views = [(-75, 75), (0, 75), (75, 75),
-                       (-75, 0), (0, 0), (75, 0),
-                       (-75, -75), (0, -75), (75, -75)]
-        """self._views = [((0, 0), (win.width/3, win.height/3)),
-                       ((win.width/3, 0), (win.width/3, win.height/3)),
-                       ((win.width/1.5, 0), (win.width/3, win.height/3)),
-
-                       ((0, win.height/3), (win.width/3, win.height/3)),
-                       ((win.width/3, win.height/3), (win.width/3,
-                                                      win.height/3)),
-                       ((win.width/1.5, win.height/3), (win.width/3,
-                                                        win.height/3)),
-
-                       ((0, win.height/1.5), (,)),
-                       ((win.width/3, win.height/1.5), (,)),
-                       ((win.width/1.5, win.height/1.5), (,))
-                       ]
-                       """
 
         self.gens = [((0, int(win.height/1.5)), testgen.TestGen()),
-        #lsysgen.LSysGen(win.width, win.height, (-75, 75))),
-                     ((win.width/3, int(win.height/1.5)), testgen.TestGen()),
+                     ((win.width/3, int(win.height/1.5)), lsysgen.LSysGen()),
+                     #((win.width/3, int(win.height/1.5)), testgen.TestGen()),
                      ((int(win.width/1.5), int(win.height/1.5)), testgen.TestGen()),
                     ((0, win.height/3), testgen.TestGen()),
                     ((win.width/3, win.height/3), testgen.TestGen()),

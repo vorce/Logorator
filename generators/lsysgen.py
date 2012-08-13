@@ -26,9 +26,8 @@ class LSysGen(logorator.Generator):
 
     """
 
-    def __init__(self, height, width, pos):
+    def __init__(self):
         self.seed = {}
-        self.pos = pos
         self.params = {'red': self.g_color_range(),
                        'green': self.g_color_range(),
                        'blue': self.g_color_range(),
@@ -46,9 +45,8 @@ class LSysGen(logorator.Generator):
 
     def render(self, layer):
         if self.seed:
-            (x, y) = self.pos
-            self.sierpinski_state = {"x":(self.seed["startx"] + x),
-                                     "y":(self.seed["starty"] + y),
+            self.sierpinski_state = {"x":(self.seed["startx"]),
+                                     "y":(self.seed["starty"]),
                                      "a":0.0,
                                      "s":self.seed["step"],
                                      "d":self.seed["angle"]}
