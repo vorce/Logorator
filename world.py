@@ -12,15 +12,37 @@ import lsysgen
 class World(object):
     def __init__(self, win, seeds):
         self.paused = False
-        self.gens = [lsysgen.LSysGen(win.width, win.height, (-75, 75)),
-                     testgen.TestGen(win.width, win.height, (0, 75)),
-                     testgen.TestGen(win.width, win.height, (75, 75)),
-                     testgen.TestGen(win.width, win.height, (-75, 0)),
-                     testgen.TestGen(win.width, win.height, (0, 0)),
-                     testgen.TestGen(win.width, win.height, (75, 0)),
-                     testgen.TestGen(win.width, win.height, (-75, -75)),
-                     testgen.TestGen(win.width, win.height, (0, -75)),
-                     testgen.TestGen(win.width, win.height, (75, -75))]
+        self.win = win
+        self._views = [(-75, 75), (0, 75), (75, 75),
+                       (-75, 0), (0, 0), (75, 0),
+                       (-75, -75), (0, -75), (75, -75)]
+        """self._views = [((0, 0), (win.width/3, win.height/3)),
+                       ((win.width/3, 0), (win.width/3, win.height/3)),
+                       ((win.width/1.5, 0), (win.width/3, win.height/3)),
+
+                       ((0, win.height/3), (win.width/3, win.height/3)),
+                       ((win.width/3, win.height/3), (win.width/3,
+                                                      win.height/3)),
+                       ((win.width/1.5, win.height/3), (win.width/3,
+                                                        win.height/3)),
+
+                       ((0, win.height/1.5), (,)),
+                       ((win.width/3, win.height/1.5), (,)),
+                       ((win.width/1.5, win.height/1.5), (,))
+                       ]
+                       """
+
+        self.gens = [((0, int(win.height/1.5)), testgen.TestGen()),
+        #lsysgen.LSysGen(win.width, win.height, (-75, 75))),
+                     ((win.width/3, int(win.height/1.5)), testgen.TestGen()),
+                     ((int(win.width/1.5), int(win.height/1.5)), testgen.TestGen()),
+                    ((0, win.height/3), testgen.TestGen()),
+                    ((win.width/3, win.height/3), testgen.TestGen()),
+                    ((int(win.width/1.5), win.height/3), testgen.TestGen()),
+
+                    ((0, 0), testgen.TestGen()),
+                    ((win.width/3, 0), testgen.TestGen()),
+                    ((int(win.width/1.5), 0), testgen.TestGen())]
 
         if seeds != None:
             for g in self.gens:
@@ -63,8 +85,9 @@ class World(object):
     def create_seeds(self, dt):
         if not self.paused:
             for g in self.gens:
-                self.create_seed(g)
-                print("seed: {0}".format(g.dump()))
+                (c, gen) = g
+                self.create_seed(gen)
+                print("seed: {0}".format(gen.dump()))
             print("------------------")
         #for ent in self.entities.values():
             #ent.update()
@@ -72,11 +95,33 @@ class World(object):
     def tick(self, paused):
         self.paused = paused
 
-    def draw(self):
-        glClear(GL_COLOR_BUFFER_BIT)
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        #self.batch.draw()
-        for g in self.gens:
-            g.render(None)
+    def _setup_view(self, coords):
+        (x, y) = coords
+        glViewport(x, y, self.win.width/3, self.win.height/3)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        zoom = 50.0
+        width_ratio = (self.win.width/3) / (self.win.height/3)
+        gluOrtho2D(-zoom * width_ratio,
+                   zoom * width_ratio,
+                   -zoom,
+                   zoom)
 
+        glPushAttrib(GL_ENABLE_BIT|GL_SCISSOR_BIT)
+        glEnable(GL_SCISSOR_TEST)
+        glScissor(x, y, self.win.width/3, self.win.height/3)
+
+    def draw(self):
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+        glClear(GL_COLOR_BUFFER_BIT)
+
+        for g in self.gens:
+            (coords, gen) = g
+            self._setup_view(coords)
+            gen.render(None)
+            glPopAttrib()
+
+        glDisable(GL_SCISSOR_TEST)
+        glFlush()
+        

@@ -9,9 +9,8 @@ class TestGen(logorator.Generator):
     controlled by the seed.
     """
 
-    def __init__(self, height, width, pos):
+    def __init__(self):
         self.seed = {}
-        self.pos = pos
         self.params = {'red': self.g_color_range(),
                        'green': self.g_color_range(),
                        'blue': self.g_color_range(),
@@ -24,13 +23,12 @@ class TestGen(logorator.Generator):
 
     def render(self, layer):
         if self.seed:
-            (x, y) = self.pos
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
             
             glColor4ub(self.seed['red'], self.seed['green'],
                        self.seed['blue'], self.seed['alpha'])
-            self.ngon(x + self.seed['x'], y + self.seed['y'],
+            self.ngon(self.seed['x'], self.seed['y'],
                       self.seed['radius'],
                       self.seed['sides'], self.seed['start_angle'])
             #self.ngon(1, 1, 5, 4)
