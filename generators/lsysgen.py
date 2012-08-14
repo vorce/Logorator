@@ -36,7 +36,7 @@ class LSysGen(logorator.Generator):
                        'starty': self.g_int_const(-33), #self.g_int_span(-10, 10),
                        'thickness': self.g_int_span(8, 20),
                        'angle': self.g_float_span(math.radians(90), math.radians(140)),
-                       'step': self.g_int_const(4)}
+                       'step': self.g_int_const(5)}
 
         self.sierpinski_tri = lsys.LSys("F-B-B",
                               {"F":"F-B+F+B-F", "B":"BB"},
