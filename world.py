@@ -74,8 +74,11 @@ class World(object):
         #for ent in self.entities.values():
             #ent.update()
 
-    def tick(self, paused):
-        self.paused = paused
+    def tick(self, events):
+        self.paused = events.paused
+        if events.next_seeds:
+            self.create_seeds(None)
+            events.next_seeds = False
 
     def _setup_view(self, coords):
         (x, y) = coords

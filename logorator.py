@@ -95,7 +95,7 @@ def main_loop(screen, camera, hud, world, eventhandler):
     while not screen.has_exit:
         screen.dispatch_events()
             
-        world.tick(eventhandler.paused)
+        world.tick(eventhandler)
             
         camera.world()
         world.draw()

@@ -16,22 +16,26 @@ class Eventhandler:
     self.clickButton = None
     self.nclicks = 0
     self.paused = False
+    self.next_seeds = False
 
     # Pyglet
     @self.surface.event
     def on_key_release(symbol, mod):
-      if symbol == pyglet.window.key.SPACE:
-	self.handleSpacePress()
-      elif symbol == pyglet.window.key.S:
-	self.handleSPress()
+        if symbol == pyglet.window.key.SPACE:
+	        self.handleSpacePress()
+        elif symbol == pyglet.window.key.S:
+	        self.handleSPress()
+        elif symbol == pyglet.window.key.RIGHT:
+            self.handleRightArrow()
+
 
     # Pyglet
     @self.surface.event
     def on_mouse_release(x, y, button, mod):
-      if button == pyglet.window.mouse.LEFT:
-	self.handleLeftClickUp(None)
-      elif button == pyglet.window.mouse.RIGHT:
-	self.handleRightClickUp(None)
+        if button == pyglet.window.mouse.LEFT:
+	        self.handleLeftClickUp(None)
+        elif button == pyglet.window.mouse.RIGHT:
+	        self.handleRightClickUp(None)
 
   # A bit special, since we have to use PIL for this.
   # Pyglet refuses to not use alpha value on background.
@@ -71,5 +75,9 @@ class Eventhandler:
     filename = "{0}_{1}-{2}-{3}_{4}.{5}.{6}".format("logorator", now.year, now.month, now.day, now.hour, now.minute, now.second)
     self.saveScreenshot("screenshots/{0}.png".format(filename))
 
+  def handleRightArrow(self):
+      self.next_seeds = True
+
   def handleSpacePress(self):
       self.paused = not self.paused
+
