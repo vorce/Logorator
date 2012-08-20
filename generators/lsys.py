@@ -68,6 +68,7 @@ class LSys:
         @func an optional function that takes the state and a command,
             handles the command and return the resulting state.
         """
+        self.verts = []
         s = state
         for c in cmds:
             s = self.parse_command(s, c, forward_func)
