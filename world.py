@@ -8,27 +8,41 @@ import os, sys, inspect
 sys.path.insert(0, 'generators')
 import testgen
 import lsysgen
+import textgen
 
 class World(object):
     def __init__(self, win, seeds):
         self.paused = False
         self.win = win
 
-        self.gens = [((0, int(win.height/1.5)), testgen.TestGen()),
+        self.gens = [((0, int(win.height/1.5)), textgen.TextGen()),
+                    #((0, int(win.height/1.5)), testgen.TestGen()),
                      ((win.width/3, int(win.height/1.5)), lsysgen.LSysGen()),
-                     #((win.width/3, int(win.height/1.5)), testgen.TestGen()),
                      ((int(win.width/1.5), int(win.height/1.5)), testgen.TestGen()),
-                    ((0, win.height/3), testgen.TestGen()),
-                    ((win.width/3, win.height/3), testgen.TestGen()),
-                    ((int(win.width/1.5), win.height/3), testgen.TestGen()),
+                     ((0, win.height/3), testgen.TestGen()),
+                     ((win.width/3, win.height/3), lsysgen.LSysGen()),
+                     ((int(win.width/1.5), win.height/3), testgen.TestGen()),
 
-                    ((0, 0), testgen.TestGen()),
-                    ((win.width/3, 0), testgen.TestGen()),
-                    ((int(win.width/1.5), 0), testgen.TestGen())]
+                     ((0, 0), testgen.TestGen()),
+                     ((win.width/3, 0), testgen.TestGen()),
+                     ((int(win.width/1.5), 0), testgen.TestGen())]
 
         if seeds != None:
+            (module, generator) = seeds.get('__generator__', ('testgen',
+                                                              'TestGen'))
+
+            new_gens = []
             for g in self.gens:
-                g.seed = seeds
+                print("module: {0}, generator: {1}".format(module, generator))
+                ((x, y), tmp) = g
+                genclass = reduce(getattr, [generator],
+                                  sys.modules[module])
+                gen = genclass()
+                gen.seed = seeds
+                newgen = ((x, y), gen)
+                new_gens.append(newgen)
+            self.gens = new_gens
+            print(self.gens)
         else:
             self.create_seeds(0)
 
@@ -58,7 +72,7 @@ class World(object):
             #ent.updateBaseStats()
 
     def create_seed(self, gen):
-        s = {}
+        s = {'__generator__':(gen.__module__, gen.__class__.__name__)}
         for p in gen.params:
             s[p] = gen.params[p].next()
         gen.seed = s

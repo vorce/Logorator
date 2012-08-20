@@ -17,8 +17,8 @@ class TestGen(logorator.Generator):
                        'alpha': self.g_int_span(75, 150),
                        'x': self.g_int_const(0), #self.g_int_span(-10, 10),
                        'y': self.g_int_const(0), #self.g_int_span(-10, 10),
-                       'radius': self.g_int_span(8, 20),
-                       'sides': self.g_int_span(3, 8),
+                       'radius': self.g_int_span(8, 30),
+                       'sides': self.g_int_span(3, 9),
                        'start_angle': self.g_int_range(359)}
 
     def render(self, layer):

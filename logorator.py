@@ -48,6 +48,10 @@ class Generator:
     def g_color_range(self):
         return self.g_int_range(255)
 
+    def g_list_item(self, l):
+        while True:
+            yield l[random.randint(0, len(l)-1)]
+
     def g_int_const(self, c):
         return self._g_const(c)
 

@@ -80,4 +80,5 @@ class Eventhandler:
 
   def handleSpacePress(self):
       self.paused = not self.paused
+      print("Paused: " + str(self.paused))
 

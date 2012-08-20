@@ -43,12 +43,7 @@ class LSys:
             [ (push state), ] (pop state)
         """
         s = None
-        if cmd == "F":
-            if forward_func == None:
-                s = self.forward(state)
-            else:
-                s = forward_func(state)
-        elif cmd == "B":
+        if cmd == "F" or cmd == "B":
             if forward_func == None:
                 s = self.forward(state)
             else:
