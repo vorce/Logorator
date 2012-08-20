@@ -12,7 +12,7 @@ def _lsys_forward_func(state):
     y = (state.get("y") + (s * math.sin(a)))
 
     pyglet.graphics.draw(2, GL_LINES,
-        ('v2f', (state.get("x"), state.get("y"), x, y)))
+        ('v2f\static', (state.get("x"), state.get("y"), x, y)))
 
     return {"x":x,
             "y":y,
@@ -42,9 +42,11 @@ class LSysGen(logorator.Generator):
         self.sierpinski_tri = lsys.LSys("F-B-B",
                               {"F":"F-B+F+B-F", "B":"BB"},
                               4)
+        self.stvl = None
         print(self.sierpinski_tri.commands)
 
         self.dragon_curve = lsys.LSys("FX", {"X":"X+YF", "Y":"FX-Y"}, 10)
+        self.dcvl = None
 
     def render(self, layer):
         if self.seed:
@@ -69,8 +71,15 @@ class LSysGen(logorator.Generator):
             if model == 0:
                 glRotatef(self.seed['angle'], 0.0, 0.0, 1.0)
                 self.sierpinski_tri.parse(self.sierpinski_state,
-                                          self.sierpinski_tri.commands,
-                                          _lsys_forward_func)
+                                          self.sierpinski_tri.commands)
+                                          #_lsys_forward_func)
+                if self.stvl == None:
+                    self.stvl = pyglet.graphics.vertex_list(
+                                    len(self.sierpinski_tri.verts)/2,
+                                    ('v2f/static',
+                                    self.sierpinski_tri.verts))
+                self.stvl.draw(GL_LINES) 
+
             elif model == 1:
                 """glMatrixMode(GL_PROJECTION)
                 glLoadIdentity()
@@ -82,8 +91,13 @@ class LSysGen(logorator.Generator):
                 """
                 glRotatef(self.seed['angle'], 0.0, 0.0, 1.0) 
                 self.dragon_curve.parse(self.dragon_state,
-                                        self.dragon_curve.commands,
-                                        _lsys_forward_func)
-                
+                                        self.dragon_curve.commands)
+                                        #_lsys_forward_func)
+                if self.dcvl == None:
+                    self.dcvl = pyglet.graphics.vertex_list(
+                                    len(self.dragon_curve.verts)/2,
+                                    ('v2f/static',
+                                    self.dragon_curve.verts))
+                self.dcvl.draw(GL_LINES)
                 #glPopMatrix()
             

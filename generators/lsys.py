@@ -14,6 +14,7 @@ Joel Carlbark 2012
 class LSys:
     def __init__(self, axiom, rules, iterations):
         self.stack = []
+        self.verts = []
         self.commands = self.evolve(iterations, axiom, rules)
 
     def produce(self, axiom, rules):
@@ -70,6 +71,7 @@ class LSys:
         s = state
         for c in cmds:
             s = self.parse_command(s, c, forward_func)
+        #print("verts: " + str(self.verts))
         return s
 
     def left(self, state):
@@ -102,6 +104,10 @@ class LSys:
         x = (state.get("x") + (s * math.cos(a)))
         y = (state.get("y") + (s * math.sin(a)))
         #line(state.get("x"), state.get("y"), x, y)
+        self.verts.append(state.get("x"))
+        self.verts.append(state.get("y"))
+        self.verts.append(x)
+        self.verts.append(y)
         return {"x":x,
                 "y":y,
                 "a":a,
