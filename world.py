@@ -13,7 +13,10 @@ import textgen
 class World(object):
     def __init__(self, win, seeds):
         self.paused = False
+        self.multi_view = True
         self.win = win
+        
+        self.single_gen = None
 
         self.gens = [((0, int(win.height/1.5)), textgen.TextGen()),
                     #((0, int(win.height/1.5)), testgen.TestGen()),
@@ -90,9 +93,41 @@ class World(object):
 
     def tick(self, events):
         self.paused = events.paused
+        self.multi_view = events.multi_view
+
         if events.next_seeds:
             self.create_seeds(None)
             events.next_seeds = False
+
+        if events.click_coord and not self.multi_view:
+            self.single_gen = self.__get_gen_view(events.click_coord)
+            #(cx, cy) = events.click_coord
+            #print("x: " + str(cx) + ", y: " + str(cy))
+
+    def __get_gen_view(self, coords):
+        (x, y) = coords
+        
+        if x < int(self.win.width/3):
+            if y < int(self.win.height/3):
+                return self.gens[6]
+            elif y < int(self.win.height/1.5):
+                return self.gens[3]
+            else:
+                return self.gens[0]
+        elif x < int(self.win.width/1.5):
+            if y < int(self.win.height/3):
+                return self.gens[7]
+            elif y < int(self.win.height/1.5):
+                return self.gens[4]
+            else:
+                return self.gens[1]
+        else:
+            if y < int(self.win.height/3):
+                return self.gens[8]
+            elif y < int(self.win.height/1.5):
+                return self.gens[5]
+            else:
+                return self.gens[2]
 
     def _setup_view(self, coords):
         (x, y) = coords
@@ -115,12 +150,16 @@ class World(object):
         glLoadIdentity()
         glClear(GL_COLOR_BUFFER_BIT)
 
-        for g in self.gens:
-            (coords, gen) = g
-            self._setup_view(coords)
-            gen.render(None)
-            glPopAttrib()
+        if self.multi_view:
+            for g in self.gens:
+                (coords, gen) = g
+                self._setup_view(coords)
+                gen.render(None)
+                glPopAttrib()
 
-        glDisable(GL_SCISSOR_TEST)
-        glFlush()
+            glDisable(GL_SCISSOR_TEST)
+            #glFlush()
+        elif self.single_gen:
+            (tmp, gen) = self.single_gen# self.gens[0]
+            gen.render(None)
         

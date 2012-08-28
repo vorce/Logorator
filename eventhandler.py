@@ -17,6 +17,9 @@ class Eventhandler:
     self.nclicks = 0
     self.paused = False
     self.next_seeds = False
+    self.multi_view = True
+    self.selected_view = None
+    self.click_coord = (None, None)
 
     # Pyglet
     @self.surface.event
@@ -32,6 +35,8 @@ class Eventhandler:
     # Pyglet
     @self.surface.event
     def on_mouse_release(x, y, button, mod):
+        self.click_coord = (x, y)
+
         if button == pyglet.window.mouse.LEFT:
 	        self.handleLeftClickUp(None)
         elif button == pyglet.window.mouse.RIGHT:
@@ -56,7 +61,8 @@ class Eventhandler:
     pass
 
   def handleLeftClickUp(self, event):
-    pass
+      self.multi_view = not self.multi_view
+      print("Multi view: " + str(self.multi_view))
 
   def handleRightClickDown(self, event):
     pass
