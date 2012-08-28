@@ -19,7 +19,7 @@ class Eventhandler:
     self.next_seeds = False
     self.multi_view = True
     self.selected_view = None
-    self.click_coord = (None, None)
+    self.click_coord = None
 
     # Pyglet
     @self.surface.event
@@ -62,7 +62,7 @@ class Eventhandler:
 
   def handleLeftClickUp(self, event):
       self.multi_view = not self.multi_view
-      print("Multi view: " + str(self.multi_view))
+      # print("Multi view: " + str(self.multi_view))
 
   def handleRightClickDown(self, event):
     pass

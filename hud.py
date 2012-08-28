@@ -17,8 +17,8 @@ class Hud(object):
         self.fps = pyglet.clock.ClockDisplay()
 
     def draw(self):
-        #glMatrixMode(GL_MODELVIEW)
-        #glLoadIdentity()
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
         #self.text.draw()
         self.fps.draw()
         #pass

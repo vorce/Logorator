@@ -158,8 +158,7 @@ class World(object):
                 glPopAttrib()
 
             glDisable(GL_SCISSOR_TEST)
-            #glFlush()
         elif self.single_gen:
-            (tmp, gen) = self.single_gen# self.gens[0]
+            (tmp, gen) = self.single_gen
             gen.render(None)
         
