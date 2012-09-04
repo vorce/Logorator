@@ -19,16 +19,15 @@ class World(object):
         self.single_gen = None
 
         self.gens = [((0, int(win.height/1.5)), textgen.TextGen()),
-                    #((0, int(win.height/1.5)), testgen.TestGen()),
                      ((win.width/3, int(win.height/1.5)), lsysgen.LSysGen()),
                      ((int(win.width/1.5), int(win.height/1.5)), testgen.TestGen()),
                      ((0, win.height/3), testgen.TestGen()),
                      ((win.width/3, win.height/3), lsysgen.LSysGen()),
                      ((int(win.width/1.5), win.height/3), testgen.TestGen()),
 
-                     ((0, 0), testgen.TestGen()),
+                     ((0, 0), lsysgen.LSysGen()),
                      ((win.width/3, 0), testgen.TestGen()),
-                     ((int(win.width/1.5), 0), testgen.TestGen())]
+                     ((int(win.width/1.5), 0), lsysgen.LSysGen())]
 
         if seeds != None:
             (module, generator) = seeds.get('__generator__', ('testgen',

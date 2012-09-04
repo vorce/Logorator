@@ -20,5 +20,5 @@ class Hud(object):
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
         #self.text.draw()
-        self.fps.draw()
+        #self.fps.draw()
         #pass
