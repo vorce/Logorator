@@ -21,15 +21,62 @@ def _lsys_forward_func(state):
             "a":a,
             "s":s,
             "d":d}
-"""
-"""
+
 class LSysGen(logorator.Generator):
     """
-
     """
 
     def __init__(self):
         self.seed = {}
+
+        # List of different l-system configurations together with start state
+        self.sys = [(lsys.LSys("F-B-B",
+                              {"F":"F-B+F+B-F", "B":"BB"},
+                              4),
+                     {"x":0,#(self.seed["startx"]),
+                      "y":0,#(self.seed["starty"]),
+                      "a":0.0,
+                      "s":5,
+                      "d":math.radians(120)}),
+                   (lsys.LSys("FX", {"X":"X+YF", "Y":"FX-Y"}, 10),
+                    {"x":-15.0,
+                     "y":20.0,
+                     "a":0.0,
+                     "s":1.8,
+                     "d":math.radians(90)}),
+                   (lsys.LSys("F", {"F":"B[+F]-F", "B":"BB"}, 7),
+                   {"x":0,
+                    "y":0,
+                    "a":0.0,
+                    "s":0.35,
+                    "d":math.radians(45)}),
+                   (lsys.LSys("X", {"X":"F-[[X]+X]+F[+FX]-X", "F":"FF"}, 6),
+                   {"x":0,
+                    "y":0,
+                    "a":0.0,
+                    "s":0.4,
+                    "d":math.radians(25)}),
+                   (lsys.LSys("F", {"F":"F[-F]F[+F][F]"}, 5),
+                    {"x":0,
+                     "y":0,
+                     "a":0.0,
+                     "s":1,
+                     "d":math.radians(40)}),
+                   (lsys.LSys("F", {"F":"FF-[-F+F+F]+[+F-F-F]"}, 4),
+                    {"x":-15,
+                     "y":0,
+                     "a":0.0,
+                     "s":1.75,
+                     "d":math.radians(22.5)}),
+                   (lsys.LSys("X", {"X":"F[+X][-X]FX", "F":"FF"}, 7),
+                   {"x":-10,
+                    "y":0,
+                    "a":0.0,
+                    "s":0.35,
+                    "d":math.radians(25.7)}),
+                   ]
+
+        # Exposed parameters
         self.params = {'red': self.g_color_range(),
                        'green': self.g_color_range(),
                        'blue': self.g_color_range(),
@@ -38,47 +85,15 @@ class LSysGen(logorator.Generator):
                        'starty': self.g_int_const(-30),
                        'thickness': self.g_int_span(8, 20),
                        'angle': self.g_int_range(359),
-                       'model':self.g_int_range(3),
-                       } # 5
+                       'model':self.g_int_range(len(self.sys)-1),
+                       'koko':self.g_int_span(20, 50),
+                       }
 
-        self.sierpinski_tri = lsys.LSys("F-B-B",
-                              {"F":"F-B+F+B-F", "B":"BB"},
-                              4)
-        self.stvl = None
-
-        self.dragon_curve = lsys.LSys("FX", {"X":"X+YF", "Y":"FX-Y"}, 10)
-        self.dcvl = None
-
-        self.plant = lsys.LSys("F", {"F":"B[+F]-F", "B":"BB"}, 7) 
-        self.plantv = None
-
-        self.plant2 = lsys.LSys("X", {"X":"F-[[X]+X]+F[+FX]-X", "F":"FF"}, 6)
-        self.plant2v = None
+        # list of vertices for each entry in self.sys
+        self.vs = [None, None, None, None, None, None, None]
 
     def render(self, layer):
         if self.seed:
-            self.sierpinski_state = {"x":(self.seed["startx"]),
-                                     "y":(self.seed["starty"]),
-                                     "a":0.0,
-                                     "s":5,
-                                     "d":math.radians(120)}
-            self.dragon_state = {"x":-15.0, #(self.seed["startx"]),
-                                 "y":20.0,
-                                 "a":0.0,
-                                 "s":1.8,
-                                 "d":math.radians(90)}
-
-            self.plant_state = {"x":0,
-                                "y":0,
-                                "a":0.0,
-                                "s":0.35,
-                                "d":math.radians(45)}
-            self.plant2_state = {"x":0,
-                                 "y":0,
-                                 "a":0.0,
-                                 "s":0.4,
-                                 "d":math.radians(25)}
-
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
             
@@ -86,56 +101,15 @@ class LSysGen(logorator.Generator):
                        self.seed['blue'], self.seed['alpha'])
            
             model = self.seed.get('model', 0)
-            if model == 0:
-                glRotatef(self.seed['angle'], 0.0, 0.0, 1.0)
-                self.sierpinski_tri.parse(self.sierpinski_state,
-                                          self.sierpinski_tri.commands)
-                                          #_lsys_forward_func)
-                if self.stvl == None:
-                    self.stvl = pyglet.graphics.vertex_list(
-                                    len(self.sierpinski_tri.verts)/2,
-                                    ('v2f/static',
-                                    self.sierpinski_tri.verts))
-                self.stvl.draw(GL_LINES) 
+            (ls, state) = self.sys[model]
 
-            elif model == 1:
-                """glMatrixMode(GL_PROJECTION)
-                glLoadIdentity()
-                gluPerspective(50, 1.0, 0.10, 250.0)
-                glMatrixMode(GL_MODELVIEW)
-                glPushMatrix()
-                glLoadIdentity()
-                gluLookAt(0.0, 0.0, 230.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
-                """
-                #glRotatef(self.seed['angle'], 0.0, 0.0, 1.0) 
-                self.dragon_curve.parse(self.dragon_state,
-                                        self.dragon_curve.commands)
-                                        #_lsys_forward_func)
-                if self.dcvl == None:
-                    self.dcvl = pyglet.graphics.vertex_list(
-                                    len(self.dragon_curve.verts)/2,
+            glRotatef(self.seed['angle'], 0.0, 0.0, 1.0)
+            ls.parse(state, ls.commands)
+
+            if self.vs[model] == None:
+                self.vs[model] = pyglet.graphics.vertex_list(
+                                    len(ls.verts)/2,
                                     ('v2f/static',
-                                    self.dragon_curve.verts))
-                self.dcvl.draw(GL_LINES)
-                #glPopMatrix()
-            elif model == 2:
-                glRotatef(self.seed['angle'], 0.0, 0.0, 1.0)
-                self.plant.parse(self.plant_state,
-                                 self.plant.commands)
-                if self.plantv == None:
-                    self.plantv = pyglet.graphics.vertex_list(
-                        len(self.plant.verts)/2,
-                        ('v2f/static',
-                        self.plant.verts))
-                self.plantv.draw(GL_LINES)
-            elif model == 3:
-                glRotatef(self.seed['angle'], 0.0, 0.0, 1.0)
-                self.plant2.parse(self.plant2_state,
-                                  self.plant2.commands)
-                if self.plant2v == None:
-                    #print(self.plant2.verts)
-                    self.plant2v = pyglet.graphics.vertex_list(
-                        len(self.plant2.verts)/2,
-                        ('v2f/static',
-                        self.plant2.verts))
-                self.plant2v.draw(GL_LINES)
+                                    ls.verts))
+            self.vs[model].draw(GL_LINES)
+
