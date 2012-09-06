@@ -75,7 +75,7 @@ class Generator:
         raise NotImplementedException("Should implement this")
 
 
-def init(width, height, inp=None):
+def init(width, height, inp = None):
     pyglet.clock.set_fps_limit(60)
 
     config = Config(sample_buffers=1, samples=4,
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         f = open(sys.argv[1], 'r')
         line = f.readline()
         inp = eval(line) # hue, hue, hue
-        if isinstance(inp, dict):
+        if isinstance(inp, list):
             (screen, camera, hud, world, eventhandler) = init(800, 800, inp)
     else:
         (screen, camera, hud, world, eventhandler) = init(800, 800)
