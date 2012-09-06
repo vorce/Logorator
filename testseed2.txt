@@ -1,1 +1,0 @@
-{'blue': 203, 'startx': -40, 'starty': -30, 'angle': 94, '__generator__': ('lsysgen', 'LSysGen'), 'thickness': 19, 'green': 161, 'alpha': 92, 'model': 0, 'red': 123}

@@ -77,7 +77,6 @@ class World(object):
                     ]
 
         if seeds != None:
-            # Untested!
             newgens = []
             for s in seeds:
                 (module, generator) = s.get('__generator__', ('testgen',
