@@ -2,12 +2,32 @@ import pyglet
 from pyglet.gl import *
 import random
 import os, sys, inspect
+import itertools
 sys.path.insert(0, 'generators')
 import testgen
 import lsysgen
 import textgen
 
-def _setup_view(width, height, coords):
+class GenView():
+    """
+    A view for zero or more generators.
+    """
+    def __init__(self, position, dimensions, gens = None):
+        self.pos = position
+        self.gens = gens
+        self.width, self.height = dimensions
+        self._structure_gens()
+    
+    def _structure_gens(self):
+        s_gens = {}
+        for g in self.gens:
+            mod_class = (g.__module__, g.__class__.__name__)
+            ll = s_gens.get(mod_class, [])
+            ll.append(g)
+            s_gens[mod_class] = ll
+        self.s_gens = s_gens
+
+    def _setup_view(self, width, height, coords):
         (x, y) = coords
         glViewport(x, y, width, height)
         glMatrixMode(GL_PROJECTION)
@@ -23,24 +43,53 @@ def _setup_view(width, height, coords):
         glEnable(GL_SCISSOR_TEST)
         glScissor(x, y, width, height)
 
-class GenView():
-    """
-    A view for one or more generators.
-    """
-    def __init__(self, position, dimensions, gens = None):
-        self.pos = position
-        self.gens = gens
-        self.width, self.height = dimensions
-
     def render(self, multi_view = True):
         if multi_view:
-            _setup_view(self.width, self.height, self.pos)
+            self._setup_view(self.width, self.height, self.pos)
 
-        for g in self.gens:
-            g.render(None)
+        for g in self.gens: 
+            g.render()
 
         if multi_view:
             glPopAttrib()
+
+    def mix(self, another_view):
+        """
+        Mix this view with another_view,
+        creating a new view.
+        """
+        new_gens = {}
+        for smc in self.s_gens:
+            for amc in another_view.s_gens:
+                if smc == amc:
+                    (sm, sc) = smc
+                    (am, ac) = amc
+                    for sg in self.s_gens[smc]:
+                        for ag in another_view.s_gens[amc]:
+                            ng = getattr(sys.modules[sm], sc)()
+                            for s in sg.seed:
+                                if s == '__generator__':
+                                    continue
+                                ng.seed[s] = (sg.seed[s] + ag.seed[s]) / 2
+                            ll = new_gens.get(smc, [])
+                            ll.append(ng)
+                            new_gens[smc] = ll
+            if new_gens.get(smc, []) == []:
+                new_gens[smc] = self.s_gens[smc]
+
+        # import pdb; pdb.set_trace()
+        # deal with more gens of a type than max in any of the two sets
+        for nmc in new_gens:
+            max_c = max(len(self.s_gens.get(nmc, [])),
+                        len(another_view.s_gens.get(nmc, [])))
+            while len(new_gens[nmc]) > max_c:
+                new_gens[nmc].pop(random.randint(0, len(new_gens[nmc])-1))
+
+        only_gens = list(itertools.chain.from_iterable(new_gens.values()))
+        gv = GenView((0, 0), (self.width, self.height), only_gens)
+        
+        return gv
+
 
 
 class World(object):
@@ -92,6 +141,12 @@ class World(object):
             print(self.views)
         else:
             self.create_seeds(0)
+
+            # Mix the second and third view to form a new one, and place it
+            # in the lower right position.
+            gv = self.views[1].mix(self.views[2])
+            gv.pos = (int(win.width/1.5), 0)
+            self.views[8] = gv
 
         pyglet.clock.schedule_interval(self.create_seeds, 10)
 

@@ -21,7 +21,7 @@ class TestGen(logorator.Generator):
                        'sides': self.g_int_span(3, 9),
                        'start_angle': self.g_int_range(359)}
 
-    def render(self, layer):
+    def render(self):
         if self.seed:
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -31,7 +31,6 @@ class TestGen(logorator.Generator):
             self.ngon(self.seed['x'], self.seed['y'],
                       self.seed['radius'],
                       self.seed['sides'], self.seed['start_angle'])
-            #self.ngon(1, 1, 5, 4)
 
     def _concat(self, it):
         return list(y for x in it for y in x)
@@ -56,6 +55,5 @@ class TestGen(logorator.Generator):
         @param start_angle: rotation of the entire polygon
         """
         points = self._concat(self._iter_ngon(x, y, r, sides, start_angle))
-        #print(points)
         pyglet.graphics.draw(len(points)/2, GL_TRIANGLE_FAN, ('v2f', points))
-    
+   

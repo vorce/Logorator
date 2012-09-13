@@ -24,7 +24,7 @@ class TextGen(logorator.Generator):
         self.label.anchor_y = 'center'
         self.label.text = 'TextGen'
 
-    def render(self, layer):
+    def render(self):
         if self.seed:
             self.label.color = (self.seed['red'], self.seed['green'],
                                 self.seed['blue'], self.seed['alpha'])

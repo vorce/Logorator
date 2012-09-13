@@ -92,7 +92,7 @@ class LSysGen(logorator.Generator):
         # list of vertices for each entry in self.sys
         self.vs = [None, None, None, None, None, None, None]
 
-    def render(self, layer):
+    def render(self):
         if self.seed:
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
