@@ -106,9 +106,11 @@ class World(object):
         self.views = [GenView((0, int(win.height/1.5)), (w, h),
                               [textgen.TextGen()]),
                       GenView((w, int(win.height/1.5)), (w, h),
-                              [lsysgen.LSysGen(), testgen.TestGen()]),
+                              [lsysgen.LSysGen(), testgen.TestGen(),
+                               testgen.TestGen(), testgen.TestGen()]),
                       GenView((int(win.width/1.5), int(win.height/1.5)), (w, h),
-                              [testgen.TestGen(), testgen.TestGen()]),
+                              [testgen.TestGen(), testgen.TestGen(),
+                               lsysgen.LSysGen()]),
 
                       GenView((0, h), (w, h),
                               [testgen.TestGen()]),
@@ -158,14 +160,18 @@ class World(object):
         
 
     def create_seeds(self, dt):
-        if not self.paused:
-            for v in self.views:
-                for g in v.gens:
-                    self.create_seed(g)
-                    print("seed: {0}".format(g.dump()))
-            print("-------------------")
+        for v in self.views:
+            for g in v.gens:
+                self.create_seed(g)
+                print("seed: {0}".format(g.dump()))
+        print("-------------------")
 
     def tick(self, events):
+        if not self.paused and events.paused:
+            pyglet.clock.unschedule(self.create_seeds)
+        elif self.paused and not events.paused:
+            pyglet.clock.schedule_interval(self.create_seeds, 10)
+
         self.paused = events.paused
         self.multi_view = events.multi_view
 

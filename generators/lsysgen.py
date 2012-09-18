@@ -74,6 +74,13 @@ class LSysGen(logorator.Generator):
                     "a":0.0,
                     "s":0.35,
                     "d":math.radians(25.7)}),
+                    (lsys.LSys("X", {"X":"A+++ZFZF-FA-FAFA-ZF+",
+                                     "Z":"-FA+++ZF+ZFZFFA-FA-A"}, 4),
+                     {"x":0,
+                     "y":0,
+                     "a":0.0,
+                     "s":5,
+                     "d":math.radians(60)})
                    ]
 
         # Exposed parameters
@@ -90,7 +97,7 @@ class LSysGen(logorator.Generator):
                        }
 
         # list of vertices for each entry in self.sys
-        self.vs = [None, None, None, None, None, None, None]
+        self.vs = [None] * len(self.sys)
 
     def render(self):
         if self.seed:
