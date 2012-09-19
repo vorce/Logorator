@@ -15,7 +15,10 @@ class LSys:
     def __init__(self, axiom, rules, iterations):
         self.stack = []
         self.verts = []
-        self.commands = self.evolve(iterations, axiom, rules)
+        self.axiom = axiom
+        self.rules = rules
+        self.iters = int(iterations)
+        self.commands = self.evolve(self.iters, axiom, rules)
 
     def produce(self, axiom, rules):
         """

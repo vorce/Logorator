@@ -66,11 +66,16 @@ class GenView():
                     (am, ac) = amc
                     for sg in self.s_gens[smc]:
                         for ag in another_view.s_gens[amc]:
-                            ng = getattr(sys.modules[sm], sc)()
-                            for s in sg.seed:
-                                if s == '__generator__':
-                                    continue
-                                ng.seed[s] = (sg.seed[s] + ag.seed[s]) / 2
+                            #import pdb; pdb.set_trace()
+                            try:
+                                ng = sg.mix(ag)
+                            except AttributeError:
+                                ng = getattr(sys.modules[sm], sc)()
+                                for s in sg.seed:
+                                    if s == '__generator__':
+                                        continue
+                                    ng.seed[s] = (sg.seed[s] + ag.seed[s]) / 2
+
                             ll = new_gens.get(smc, [])
                             ll.append(ng)
                             new_gens[smc] = ll

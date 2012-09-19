@@ -1,5 +1,6 @@
 import math
 import logorator
+import random
 import pyglet.graphics, pyglet.image
 from pyglet.gl import *
 import lsys
@@ -99,13 +100,52 @@ class LSysGen(logorator.Generator):
         # list of vertices for each entry in self.sys
         self.vs = [None] * len(self.sys)
 
+    def mix(self, other):
+        n = LSysGen()
+        for i in self.seed:
+            if i == '__generator__':
+                continue
+            n.seed[i] = random.gauss((self.seed[i] + other.seed[i]) / 2,
+                                     abs((self.seed[i] - other.seed[i]) / 2))
+
+        (ss, se) = self.sys[self.seed['model']]
+        (os, oe) = other.sys[other.seed['model']]
+        nc = {}
+        for sc in ss.rules:
+            nc[sc] = ss.rules[sc]
+            for oc in os.rules:
+                nc[oc] = os.rules[oc]
+                if sc == oc:
+                    nc[sc] = ss.rules[sc][: len(ss.rules) / 2] + os.rules[oc][len(os.rules) / 2 :]
+                    
+        niters = int(random.gauss((ss.iters + os.iters) / 2,
+                                  abs((ss.iters - os.iters) / 2)))
+
+        ne = {}
+        for senv in se:
+            for oenv in oe:
+                if senv == oenv:
+                    if senv == "s":
+                        ne[senv] = {1:10, 2:5, 3:6, 4:3.74, 5:1, 6:0.4, 7:0.35,
+                                    8:0.3, 9:0.2, 10:1.8}.get(niters)
+                    else:
+                        ne[senv] = (se[senv] + oe[oenv]) / 2
+
+        nlsys = lsys.LSys(ss.axiom + os.axiom, nc, niters)
+        n.sys.append((nlsys, ne))
+        n.vs.append(None)
+        n.seed['model'] = len(n.sys) - 1
+        n.params['model'] = n.g_int_range(len(n.sys)-1)
+        print("New LSys.\naxiom: {0}, rules: {1}, iterations: {2}\n environment: {3}".format(nlsys.axiom, nlsys.rules, nlsys.iters, ne))
+        return n
+
     def render(self):
         if self.seed:
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
             
-            glColor4ub(self.seed['red'], self.seed['green'],
-                       self.seed['blue'], self.seed['alpha'])
+            glColor4ub(int(self.seed['red']), int(self.seed['green']),
+                       int(self.seed['blue']), int(self.seed['alpha']))
            
             model = self.seed.get('model', 0)
             (ls, state) = self.sys[model]
