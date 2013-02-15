@@ -1,10 +1,10 @@
 import math
-import logorator
+import generator
 import pyglet.text
 from pyglet.gl import *
 
 
-class TextGen(logorator.Generator):
+class TextGen(generator.Generator):
     def __init__(self):
         self.seed = {}
         self.params = {'red': self.g_color_range(),

@@ -1,9 +1,9 @@
 import math
-import logorator
+import generator
 import pyglet.graphics, pyglet.image
 from pyglet.gl import *
 
-class PolyGen(logorator.Generator):
+class PolyGen(generator.Generator):
     """
     Draws a polygon. Position, points and color is
     controlled by the seed.

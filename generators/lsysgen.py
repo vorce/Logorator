@@ -1,8 +1,9 @@
 import math
-import logorator
 import random
 import pyglet.graphics, pyglet.image
 from pyglet.gl import *
+
+import generator
 import lsys
 
 # Unused for now, since we want to draw
@@ -23,7 +24,7 @@ def _lsys_forward_func(state):
             "s":s,
             "d":d}
 
-class LSysGen(logorator.Generator):
+class LSysGen(generator.Generator):
     """
     """
 
