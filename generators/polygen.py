@@ -3,7 +3,7 @@ import logorator
 import pyglet.graphics, pyglet.image
 from pyglet.gl import *
 
-class TestGen(logorator.Generator):
+class PolyGen(logorator.Generator):
     """
     Draws a polygon. Position, points and color is
     controlled by the seed.

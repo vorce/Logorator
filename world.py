@@ -4,7 +4,7 @@ import random
 import os, sys, inspect
 import itertools
 sys.path.insert(0, 'generators')
-import testgen
+import polygen
 import lsysgen
 import textgen
 
@@ -111,23 +111,23 @@ class World(object):
         self.views = [GenView((0, int(win.height/1.5)), (w, h),
                               [textgen.TextGen()]),
                       GenView((w, int(win.height/1.5)), (w, h),
-                              [lsysgen.LSysGen(), testgen.TestGen(),
-                               testgen.TestGen(), testgen.TestGen()]),
+                              [lsysgen.LSysGen(), polygen.PolyGen(),
+                               polygen.PolyGen(), polygen.PolyGen()]),
                       GenView((int(win.width/1.5), int(win.height/1.5)), (w, h),
-                              [testgen.TestGen(), testgen.TestGen(),
+                              [polygen.PolyGen(), polygen.PolyGen(),
                                lsysgen.LSysGen()]),
 
                       GenView((0, h), (w, h),
-                              [testgen.TestGen()]),
+                              [polygen.PolyGen()]),
                       GenView((w, h), (w, h),
                               [lsysgen.LSysGen(), lsysgen.LSysGen()]),
                       GenView((int(win.width/1.5), h), (w, h),
-                              [testgen.TestGen()]),
+                              [polygen.PolyGen()]),
 
                       GenView((0, 0), (w, h),
                               [lsysgen.LSysGen()]),
                       GenView((w, 0), (w, h),
-                              [testgen.TestGen()]),
+                              [polygen.PolyGen()]),
                       GenView((int(win.width/1.5), 0), (w, h),
                               [])
                     ]
@@ -136,7 +136,7 @@ class World(object):
             newgens = []
             for s in seeds:
                 (module, generator) = s.get('__generator__', ('testgen',
-                                                              'TestGen'))
+                                                              'PolyGen'))
                 genclass = reduce(getattr, [generator], sys.modules[module])
                 gen = genclass()
                 gen.seed = s
