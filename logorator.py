@@ -42,7 +42,7 @@ def main_loop(screen, camera, myhud, myworld, myeventhandler):
     while not screen.has_exit:
         screen.dispatch_events()
 
-        myworld.tick(eventhandler)
+        myworld.tick(myeventhandler)
 
         camera.world()
         myworld.draw()
