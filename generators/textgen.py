@@ -11,8 +11,8 @@ class TextGen(generator.Generator):
                        'green': self.g_color_range(),
                        'blue': self.g_color_range(),
                        'alpha': self.g_int_span(75, 150),
-                       'x': self.g_int_const(0),
-                       'y': self.g_int_const(0)
+                       'x': self.g_constant(0),
+                       'y': self.g_constant(0)
                       }
 
         self.label = pyglet.text.Label()

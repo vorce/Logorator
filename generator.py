@@ -1,9 +1,11 @@
+import random
+
+
 class Generator:
     """
     Basic generator contract/interface
     """
-    def __init__(self, pos):
-        self.pos = pos
+    def __init__(self):
         self.params = {}
         self.seed = {}
 
@@ -34,13 +36,7 @@ class Generator:
         while True:
             yield lst[random.randint(0, len(lst) - 1)]
 
-    def g_int_const(self, c):
-        return self._g_const(c)
-
-    def g_float_const(self, c):
-        return self._g_const(c)
-
-    def _g_const(self, c):
+    def g_constant(self, c):
         while True:
             yield c
 

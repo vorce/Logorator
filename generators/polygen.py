@@ -15,8 +15,8 @@ class PolyGen(generator.Generator):
                        'green': self.g_color_range(),
                        'blue': self.g_color_range(),
                        'alpha': self.g_int_span(75, 150),
-                       'x': self.g_int_const(0), #self.g_int_span(-10, 10),
-                       'y': self.g_int_const(0), #self.g_int_span(-10, 10),
+                       'x': self.g_constant(0), #self.g_int_span(-10, 10),
+                       'y': self.g_constant(0), #self.g_int_span(-10, 10),
                        'radius': self.g_int_span(8, 30),
                        'sides': self.g_int_span(3, 9),
                        'start_angle': self.g_int_range(359)}
