@@ -3,16 +3,16 @@ from pyglet.gl import *
 import random
 import os, sys, inspect
 import itertools
-sys.path.insert(0, 'generators')
+#sys.path.insert(0, 'generators')
 import polygen
-import lsysgen
 import textgen
+import lsysgen
 
 class GenView():
     """
     A view for zero or more generators.
     """
-    def __init__(self, position, dimensions, gens = None):
+    def __init__(self, position, dimensions, gens = []):
         self.pos = position
         self.gens = gens
         self.width, self.height = dimensions
