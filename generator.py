@@ -51,3 +51,13 @@ class Generator:
 
     def load_seed(self, filename):
         raise NotImplementedException("Should implement this")
+
+    @classmethod
+    def mix_of(cls, gen1, gen2):
+        mix_gen = cls()
+        
+        for seed in gen1.seed:
+            if seed == '__generator__':
+                continue
+            mix_gen.seed[seed] = (gen1.seed[seed] + gen2.seed[seed]) / 2
+        return mix_gen
