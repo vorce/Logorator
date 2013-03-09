@@ -1,31 +1,22 @@
-import pyglet
 from pyglet.gl import *
-import random
-import os, sys, inspect
-import itertools
+
+import sys
+
 #sys.path.insert(0, 'generators')
 import polygen
 import textgen
 import lsysgen
 
-class GenView():
+from logo import Logo
+
+class LogoView():
     """
-    A view for zero or more generators.
+    A view for a logo, takes care of rendering
     """
-    def __init__(self, position, dimensions, gens = []):
-        self.pos = position
-        self.gens = gens
+    def __init__(self, position, dimensions, logo = None):
+        self.position = position
+        self.logo = logo
         self.width, self.height = dimensions
-        self._structure_gens()
-    
-    def _structure_gens(self):
-        s_gens = {}
-        for g in self.gens:
-            mod_class = (g.__module__, g.__class__.__name__)
-            ll = s_gens.get(mod_class, [])
-            ll.append(g)
-            s_gens[mod_class] = ll
-        self.s_gens = s_gens
 
     def _setup_view(self, width, height, coords):
         (x, y) = coords
@@ -45,57 +36,13 @@ class GenView():
 
     def render(self, multi_view = True):
         if multi_view:
-            self._setup_view(self.width, self.height, self.pos)
+            self._setup_view(self.width, self.height, self.position)
 
-        for g in self.gens: 
-            g.render()
+        for generator in self.logo: 
+            generator.render()
 
         if multi_view:
             glPopAttrib()
-
-    def mix(self, another_view):
-        """
-        Mix this view with another_view,
-        creating a new view.
-        """
-        new_gens = {}
-        for smc in self.s_gens:
-            for amc in another_view.s_gens:
-                if smc == amc:
-                    (sm, sc) = smc
-                    (am, ac) = amc
-                    for sg in self.s_gens[smc]:
-                        for ag in another_view.s_gens[amc]:
-                            #import pdb; pdb.set_trace()
-                            try:
-                                ng = sg.mix(ag)
-                            except AttributeError:
-                                ng = getattr(sys.modules[sm], sc)()
-                                for s in sg.seed:
-                                    if s == '__generator__':
-                                        continue
-                                    ng.seed[s] = (sg.seed[s] + ag.seed[s]) / 2
-
-                            ll = new_gens.get(smc, [])
-                            ll.append(ng)
-                            new_gens[smc] = ll
-            if new_gens.get(smc, []) == []:
-                new_gens[smc] = self.s_gens[smc]
-
-        # import pdb; pdb.set_trace()
-        # deal with more gens of a type than max in any of the two sets
-        for nmc in new_gens:
-            max_c = max(len(self.s_gens.get(nmc, [])),
-                        len(another_view.s_gens.get(nmc, [])))
-            while len(new_gens[nmc]) > max_c:
-                new_gens[nmc].pop(random.randint(0, len(new_gens[nmc])-1))
-
-        only_gens = list(itertools.chain.from_iterable(new_gens.values()))
-        gv = GenView((0, 0), (self.width, self.height), only_gens)
-        
-        return gv
-
-
 
 class World(object):
     def __init__(self, win, seeds):
@@ -105,83 +52,85 @@ class World(object):
         
         self.single_gen = None
 
-        w = win.width / 3
-        h = win.height / 3
+        width = win.width / 3
+        height = win.height / 3
 
-        self.views = [GenView((0, int(win.height/1.5)), (w, h),
-                              [textgen.TextGen()]),
-                      GenView((w, int(win.height/1.5)), (w, h),
-                              [lsysgen.LSysGen(), polygen.PolyGen(),
-                               polygen.PolyGen(), polygen.PolyGen()]),
-                      GenView((int(win.width/1.5), int(win.height/1.5)), (w, h),
-                              [polygen.PolyGen(), polygen.PolyGen(),
-                               lsysgen.LSysGen()]),
+        self.views = [LogoView((0, int(win.height/1.5)), (width, height),
+                              Logo([textgen.TextGen()])),
+                      LogoView((width, int(win.height/1.5)), (width, height),
+                              Logo([lsysgen.LSysGen(), polygen.PolyGen(),
+                               polygen.PolyGen(), polygen.PolyGen()])),
+                      LogoView((int(win.width/1.5), int(win.height/1.5)), (width, height),
+                              Logo([polygen.PolyGen(), polygen.PolyGen(),
+                               lsysgen.LSysGen()])),
 
-                      GenView((0, h), (w, h),
-                              [polygen.PolyGen()]),
-                      GenView((w, h), (w, h),
-                              [lsysgen.LSysGen(), lsysgen.LSysGen()]),
-                      GenView((int(win.width/1.5), h), (w, h),
-                              [polygen.PolyGen()]),
+                      LogoView((0, height), (width, height),
+                              Logo([polygen.PolyGen()])),
+                      LogoView((width, height), (width, height),
+                              Logo([lsysgen.LSysGen(), lsysgen.LSysGen()])),
+                      LogoView((int(win.width/1.5), height), (width, height),
+                              Logo([polygen.PolyGen()])),
 
-                      GenView((0, 0), (w, h),
-                              [lsysgen.LSysGen()]),
-                      GenView((w, 0), (w, h),
-                              [polygen.PolyGen()]),
-                      GenView((int(win.width/1.5), 0), (w, h),
-                              [])
+                      LogoView((0, 0), (width, height),
+                              Logo([lsysgen.LSysGen()])),
+                      LogoView((width, 0), (width, height),
+                              Logo([polygen.PolyGen()])),
+                      LogoView((int(win.width/1.5), 0), (width, height),
+                              Logo())
                     ]
 
-        if seeds != None:
-            newgens = []
-            for s in seeds:
-                (module, generator) = s.get('__generator__', ('testgen',
-                                                              'PolyGen'))
-                genclass = reduce(getattr, [generator], sys.modules[module])
-                gen = genclass()
-                gen.seed = s
-                newgens.append(gen)
-
-            for v in self.views:
-                v.gens = newgens
-                
-            print(self.views)
-        else:
-            self.create_seeds(0)
+        if seeds == None:
+            self.create_seeds_for_all_generators(0)
 
             # Mix the second and third view to form a new one, and place it
             # in the lower right position.
-            gv = self.views[1].mix(self.views[2])
-            gv.pos = (int(win.width/1.5), 0)
-            self.views[8] = gv
+            logo = Logo.mix_of(self.views[1].logo, self.views[2].logo)
+            mixed_view = LogoView((int(win.width/1.5), 0),
+                                  (width, height), logo)
 
-        pyglet.clock.schedule_interval(self.create_seeds, 10)
+            self.views[8] = mixed_view
+        else:
+            newgens = []
+            for seed in seeds:
+                (module, generator) = seed.get('__generator__',
+                                               ('polygen', 'PolyGen'))
+                genclass = reduce(getattr, [generator], sys.modules[module])
+                gen = genclass()
+                gen.seed = seed
+                newgens.append(gen)
 
-    def create_seed(self, gen):
-        s = {'__generator__':(gen.__module__, gen.__class__.__name__)}
-        for p in gen.params:
-            s[p] = gen.params[p].next()
-        gen.seed = s
+            for view in self.views:
+                view.logo = Logo(newgens)
+
+            print(self.views)
+
+        pyglet.clock.schedule_interval(self.create_seeds_for_all_generators, 10)
+
+    def create_seed(self, generator):
+        new_seed = {'__generator__': (generator.__module__, generator.__class__.__name__)}
+        for param in generator.params:
+            new_seed[param] = generator.params[param].next()
+        generator.seed = new_seed
         
 
-    def create_seeds(self, dt):
-        for v in self.views:
-            for g in v.gens:
-                self.create_seed(g)
-                print("seed: {0}".format(g.dump()))
+    def create_seeds_for_all_generators(self, timer):
+        for view in self.views:
+            for generator in view.logo:
+                self.create_seed(generator)
+                print("seed: {0}".format(generator.dump()))
         print("-------------------")
 
     def tick(self, events):
         if not self.paused and events.paused:
-            pyglet.clock.unschedule(self.create_seeds)
+            pyglet.clock.unschedule(self.create_seeds_for_all_generators)
         elif self.paused and not events.paused:
-            pyglet.clock.schedule_interval(self.create_seeds, 10)
+            pyglet.clock.schedule_interval(self.create_seeds_for_all_generators, 10)
 
         self.paused = events.paused
         self.multi_view = events.multi_view
 
         if events.next_seeds:
-            self.create_seeds(None)
+            self.create_seeds_for_all_generators(None)
             events.next_seeds = False
 
         if events.click_coord and not self.multi_view:
