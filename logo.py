@@ -9,7 +9,8 @@ class Logo(list):
         list.__init__(self, *args)
         self._generators_by_type = self.__generator_types_map()
         self._generator_type_set = set(self._generators_by_type.keys())
-    
+
+
     def __generator_types_map(self):
         generators_by_type = {}
         
@@ -19,7 +20,16 @@ class Logo(list):
             generator_list.append(generator)
             generators_by_type[module_and_class] = generator_list
         return generators_by_type
-    
+
+
+    @classmethod
+    def mix_of(cls, logo1, logo2):
+        unique_gens = logo1.get_unique_generators(logo2)
+        mix_gens = logo1.get_mixed_generators(logo2)
+        final_gens = unique_gens + mix_gens
+        
+        return Logo(final_gens)
+
 
     def get_unique_generators(self, other):
         unique_gen_set = self._generator_type_set.symmetric_difference(
@@ -31,7 +41,8 @@ class Logo(list):
             else:
                 unique_gens += other._generators_by_type[gen_type]
         return unique_gens
-        
+
+
     def get_mixed_generators(self, other):
         common_gen_set = self._generator_type_set.intersection(
                                 other._generator_type_set)
@@ -42,7 +53,8 @@ class Logo(list):
                                 self._generators_by_type[gen_type],
                                 other._generators_by_type[gen_type])
         return common_gens
-                    
+
+
     def _mix_generators(self, gen_type, g1s, g2s):
         new_gens = []
         i = 0
@@ -55,11 +67,3 @@ class Logo(list):
             new_gens.append(new_gen)
             i += 1
         return new_gens
-
-    @classmethod
-    def mix_of(cls, logo1, logo2):
-        unique_gens = logo1.get_unique_generators(logo2)
-        mix_gens = logo1.get_mixed_generators(logo2)
-        final_gens = unique_gens + mix_gens
-        
-        return Logo(final_gens)
