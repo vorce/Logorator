@@ -3,6 +3,7 @@ from hamcrest import *
 from logo import Logo
 import polygen
 import textgen
+import lsysgen
 
 class TestLogo(unittest.TestCase):
     def create_logo(self, gens):
@@ -60,3 +61,14 @@ class TestLogo(unittest.TestCase):
         assert_that(l3, has_item(poly_gen))
         assert_that(l3, is_not(has_items([text_gen1, text_gen2])))
         assert_that(l3, has_item(instance_of(textgen.TextGen)))
+    
+    # TODO Fix my name
+    def test_multiple_generator_logos_mixed_should_adhere_to_rules(self):
+        l1 = Logo([lsysgen.LSysGen(), polygen.PolyGen(),
+                   polygen.PolyGen(), polygen.PolyGen()])
+        
+        l2 = Logo([polygen.PolyGen(), polygen.PolyGen(),
+                   lsysgen.LSysGen()])
+
+        l3 = Logo.mix_of(l1, l2)
+        assert_that(len(l3), is_(4))
