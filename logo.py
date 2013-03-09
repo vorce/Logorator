@@ -31,6 +31,8 @@ class Logo(list):
         return Logo(final_gens)
 
 
+    # This is the easy part, get any generator type
+    # that is only in one place and copy it/them
     def get_unique_generators(self, other):
         unique_gen_set = self._generator_type_set.symmetric_difference(
                             other._generator_type_set)
@@ -59,8 +61,12 @@ class Logo(list):
         new_gens = []
         i = 0
         (themodule, clazz) = gen_type
-        for gen in max(g1s, g2s):
-            if(i > len(g2s)):
+        
+        def longest_list(list1, list2):
+            return (len(list1) >= len(list2) and list1) or (list2)
+        
+        for gen in longest_list(g1s, g2s):
+            if(i > (len(g2s) - 1)):
                 i = 0
             new_gen = getattr(sys.modules[themodule],
                               clazz).mix_of(gen, g2s[i])  # create a new mix of the same class
