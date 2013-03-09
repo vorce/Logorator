@@ -22,15 +22,17 @@ class PolyGen(generator.Generator):
                        'start_angle': self.g_int_range(359)}
 
     def render(self):
-        if self.seed:
-            glEnable(GL_BLEND)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        if not self.seed:
+            return
+        
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
             
-            glColor4ub(self.seed['red'], self.seed['green'],
-                       self.seed['blue'], self.seed['alpha'])
-            self.ngon(self.seed['x'], self.seed['y'],
-                      self.seed['radius'],
-                      self.seed['sides'], self.seed['start_angle'])
+        glColor4ub(self.seed['red'], self.seed['green'],
+                   self.seed['blue'], self.seed['alpha'])
+        self.ngon(self.seed['x'], self.seed['y'],
+                  self.seed['radius'],
+                  self.seed['sides'], self.seed['start_angle'])
 
     def _concat(self, it):
         return list(y for x in it for y in x)
@@ -56,4 +58,4 @@ class PolyGen(generator.Generator):
         """
         points = self._concat(self._iter_ngon(x, y, r, sides, start_angle))
         pyglet.graphics.draw(len(points)/2, GL_TRIANGLE_FAN, ('v2f', points))
-   
+        

@@ -5,7 +5,7 @@ from pyglet.gl import *
 
 
 class TextGen(generator.Generator):
-    def __init__(self):
+    def __init__(self, text='TextGen'):
         self.seed = {}
         self.params = {'red': self.g_color_range(),
                        'green': self.g_color_range(),
@@ -22,7 +22,7 @@ class TextGen(generator.Generator):
         self.label.y = 0
         self.label.anchor_x = 'center'
         self.label.anchor_y = 'center'
-        self.label.text = 'TextGen'
+        self.label.text = text
 
     def render(self):
         if self.seed:
