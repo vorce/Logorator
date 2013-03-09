@@ -4,11 +4,9 @@ creating generated graphic designs.
 
 2012 Joel Carlbark (c)
 """
+
 import sys
-
-import pyglet
 from pyglet.gl import *
-
 import eventhandler
 import utils
 import hud
@@ -51,14 +49,13 @@ class Logorator():
 
 if __name__ == "__main__":
     logorator = None
-
+    inp = None
+    
     if len(sys.argv) > 1:
         f = open(sys.argv[1], 'r')
         line = f.readline()
-        inp = eval(line)  # hue, hue, hue
-        if isinstance(inp, list):
-            logorator = Logorator(800, 800, inp)
-    else:
-        logorator = Logorator(800, 800)
-
+        inp = eval(line)  # I know, this is bad[tm]
+        if not isinstance(inp, list):
+            inp = None
+    logorator = Logorator(800, 800, inp)
     logorator.start()
