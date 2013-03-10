@@ -3,6 +3,7 @@ import time
 from pyglet.gl import *
 #from PIL import Image
 
+
 class Eventhandler:
     def __init__(self, surface):
         self.surface = surface
@@ -19,6 +20,7 @@ class Eventhandler:
         self.multi_logoview = True
         self.selected_view = None
         self.click_coord = None
+
 
         # Pyglet
         @self.surface.event
@@ -41,6 +43,7 @@ class Eventhandler:
             elif button == pyglet.window.mouse.RIGHT:
                 self.handle_right_click_up(None)
 
+
     # A bit special, since we have to use PIL for this.
     # Pyglet refuses to not use alpha value on background.
     def save_screenshot(self, filename):
@@ -53,9 +56,11 @@ class Eventhandler:
         #pil_image = pil_image.convert('RGB')
         #pil_image.save(filename, "PNG")
 
+
     def handle_left_click_up(self, event):
         self.multi_logoview = not self.multi_logoview
         # print("Multi view: " + str(self.multi_logoview))
+
 
     def handle_s_press(self):
         now = datetime.datetime.now()
@@ -64,8 +69,10 @@ class Eventhandler:
                     now.minute, now.second)
         self.save_screenshot("screenshots/{0}.png".format(filename))
 
+
     def handle_right_arrow_press(self):
         self.next_seeds = True
+
 
     def handle_space_press(self):
         self.paused = not self.paused
