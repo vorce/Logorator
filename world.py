@@ -47,15 +47,15 @@ class LogoView():
 class World(object):
     def __init__(self, win, seeds):
         self.paused = False
-        self.multi_view = True
+        self.multi_logoview = True
         self.win = win
         
-        self.single_gen = None
+        self.single_logoview = None
 
         width = win.width / 3
         height = win.height / 3
 
-        self.views = [LogoView((0, int(win.height/1.5)), (width, height),
+        self.logoviews = [LogoView((0, int(win.height/1.5)), (width, height),
                               Logo([textgen.TextGen()])),
                       LogoView((width, int(win.height/1.5)), (width, height),
                               Logo([lsysgen.LSysGen(), polygen.PolyGen(),
@@ -82,13 +82,13 @@ class World(object):
         if seeds == None:
             self.create_seeds_for_all_generators(0)
 
-            # Mix the second and third view to form a new one, and place it
+            # Mix the second and third logo to form a new one, and place it
             # in the lower right position.
-            logo = Logo.mix_of(self.views[1].logo, self.views[2].logo)
+            logo = Logo.mix_of(self.logoviews[1].logo, self.logoviews[2].logo)
             mixed_view = LogoView((int(win.width/1.5), 0),
                                   (width, height), logo)
 
-            self.views[8] = mixed_view
+            self.logoviews[8] = mixed_view
         else:
             newgens = []
             for seed in seeds:
@@ -99,10 +99,10 @@ class World(object):
                 gen.seed = seed
                 newgens.append(gen)
 
-            for view in self.views:
+            for view in self.logoviews:
                 view.logo = Logo(newgens)
 
-            print(self.views)
+            print(self.logoviews)
 
         pyglet.clock.schedule_interval(self.create_seeds_for_all_generators, 10)
 
@@ -114,7 +114,7 @@ class World(object):
         
 
     def create_seeds_for_all_generators(self, timer):
-        for view in self.views:
+        for view in self.logoviews:
             for generator in view.logo:
                 self.create_seed(generator)
                 print("seed: {0}".format(generator.dump()))
@@ -127,39 +127,39 @@ class World(object):
             pyglet.clock.schedule_interval(self.create_seeds_for_all_generators, 10)
 
         self.paused = events.paused
-        self.multi_view = events.multi_view
+        self.multi_logoview = events.multi_logoview
 
         if events.next_seeds:
             self.create_seeds_for_all_generators(None)
             events.next_seeds = False
 
-        if events.click_coord and not self.multi_view:
-            self.single_gen = self.__get_gen_view(events.click_coord)
+        if events.click_coord and not self.multi_logoview:
+            self.single_logoview = self.__get_logo_view(events.click_coord)
 
-    def __get_gen_view(self, coords):
+    def __get_logo_view(self, coords):
         (x, y) = coords
         
         if x < int(self.win.width/3):
             if y < int(self.win.height/3):
-                return self.views[6]
+                return self.logoviews[6]
             elif y < int(self.win.height/1.5):
-                return self.views[3]
+                return self.logoviews[3]
             else:
-                return self.views[0]
+                return self.logoviews[0]
         elif x < int(self.win.width/1.5):
             if y < int(self.win.height/3):
-                return self.views[7]
+                return self.logoviews[7]
             elif y < int(self.win.height/1.5):
-                return self.views[4]
+                return self.logoviews[4]
             else:
-                return self.views[1]
+                return self.logoviews[1]
         else:
             if y < int(self.win.height/3):
-                return self.views[8]
+                return self.logoviews[8]
             elif y < int(self.win.height/1.5):
-                return self.views[5]
+                return self.logoviews[5]
             else:
-                return self.views[2]
+                return self.logoviews[2]
 
 
     def draw(self):
@@ -167,11 +167,11 @@ class World(object):
         glLoadIdentity()
         glClear(GL_COLOR_BUFFER_BIT)
 
-        if self.multi_view:
-            for v in self.views:
+        if self.multi_logoview:
+            for v in self.logoviews:
                 v.render(True)
             glDisable(GL_SCISSOR_TEST)
 
-        elif self.single_gen:
-            self.single_gen.render(False)
+        elif self.single_logoview:
+            self.single_logoview.render(False)
         
