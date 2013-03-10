@@ -1,4 +1,3 @@
-import math
 import generator
 import pyglet.text
 from pyglet.gl import *

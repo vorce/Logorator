@@ -1,5 +1,4 @@
 from pyglet.gl import *
-import math
 
 class Camera(object):
     def __init__(self, win, zoom=1.0):
