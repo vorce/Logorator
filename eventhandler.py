@@ -16,7 +16,7 @@ class Eventhandler:
         self.nclicks = 0
         self.paused = False
         self.next_seeds = False
-        self.multi_view = True
+        self.multi_logoview = True
         self.selected_view = None
         self.click_coord = None
 
@@ -54,8 +54,8 @@ class Eventhandler:
         #pil_image.save(filename, "PNG")
 
     def handle_left_click_up(self, event):
-        self.multi_view = not self.multi_view
-        # print("Multi view: " + str(self.multi_view))
+        self.multi_logoview = not self.multi_logoview
+        # print("Multi view: " + str(self.multi_logoview))
 
     def handle_s_press(self):
         now = datetime.datetime.now()
