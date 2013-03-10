@@ -11,8 +11,8 @@ class Eventhandler:
         self.MOUSE_BUTTON_RIGHT = 3
         self.MOUSE_BUTTON_MIDDLE = 2
 
-        self.clickDownPos = None
-        self.clickButton = None
+        self.click_down_position = None
+        self.click_button = None
         self.nclicks = 0
         self.paused = False
         self.next_seeds = False
@@ -24,11 +24,11 @@ class Eventhandler:
         @self.surface.event
         def on_key_release(symbol, mod):
             if symbol == pyglet.window.key.SPACE:
-                self.handleSpacePress()
+                self.handle_space_press()
             elif symbol == pyglet.window.key.S:
-                    self.handleSPress()
+                self.handle_s_press()
             elif symbol == pyglet.window.key.RIGHT:
-                self.handleRightArrow()
+                self.handle_right_arrow_press()
 
 
         # Pyglet
@@ -37,13 +37,13 @@ class Eventhandler:
             self.click_coord = (x, y)
 
             if button == pyglet.window.mouse.LEFT:
-                self.handleLeftClickUp(None)
+                self.handle_left_click_up(None)
             elif button == pyglet.window.mouse.RIGHT:
-                self.handleRightClickUp(None)
+                self.handle_right_click_up(None)
 
     # A bit special, since we have to use PIL for this.
     # Pyglet refuses to not use alpha value on background.
-    def saveScreenshot(self, filename):
+    def save_screenshot(self, filename):
         print("Saving screenshot: {0}".format(filename))
         mgr = pyglet.image.get_buffer_manager()
         color_buffer = mgr.get_color_buffer()
@@ -53,37 +53,21 @@ class Eventhandler:
         #pil_image = pil_image.convert('RGB')
         #pil_image.save(filename, "PNG")
 
-    def handleMouseMotion(self, pos):
-        pass
-
-    def handleLeftClickDown(self, event):
-        pass
-
-    def handleLeftClickUp(self, event):
+    def handle_left_click_up(self, event):
         self.multi_view = not self.multi_view
         # print("Multi view: " + str(self.multi_view))
 
-    def handleRightClickDown(self, event):
-        pass
-
-    def handleRightClickUp(self, event):
-        pass
-
-    def handleMiddleClickDown(self, event):
-        pass
-
-    def handleMiddleClickUp(self, event):
-        pass
-
-    def handleSPress(self):
+    def handle_s_press(self):
         now = datetime.datetime.now()
-        filename = "{0}_{1}-{2}-{3}_{4}.{5}.{6}".format("logorator", now.year, now.month, now.day, now.hour, now.minute, now.second)
-        self.saveScreenshot("screenshots/{0}.png".format(filename))
+        filename = "{0}_{1}-{2}-{3}_{4}.{5}.{6}".format("logorator",
+                    now.year, now.month, now.day, now.hour,
+                    now.minute, now.second)
+        self.save_screenshot("screenshots/{0}.png".format(filename))
 
-    def handleRightArrow(self):
+    def handle_right_arrow_press(self):
         self.next_seeds = True
 
-    def handleSpacePress(self):
+    def handle_space_press(self):
         self.paused = not self.paused
         print("Paused: " + str(self.paused))
 
