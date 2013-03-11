@@ -30,32 +30,34 @@ class PolyGen(generator.Generator):
             
         glColor4ub(self.seed['red'], self.seed['green'],
                    self.seed['blue'], self.seed['alpha'])
-        self.ngon(self.seed['x'], self.seed['y'],
-                  self.seed['radius'],
-                  self.seed['sides'], self.seed['start_angle'])
+        points = self.ngon(self.seed['x'], self.seed['y'],
+                           self.seed['radius'], self.seed['sides'],
+                           self.seed['start_angle'])
+        
+        pyglet.graphics.draw(len(points) / 2, GL_TRIANGLE_FAN, ('v2f', points))
 
     def _concat(self, it):
         return list(y for x in it for y in x)
     
-    def _iter_ngon(self, x, y, r, sides, start_angle = 0.0):
-        rad = max(r, 0.01)
+    def _iter_ngon(self, x, y, radius, sides, start_angle = 0.0):
+        rad = max(radius, 0.01)
         rad_ = max(min(sides / rad / 2.0, 1), -1)
         da = math.pi * 2 / sides
         a = start_angle
         while a <= math.pi * 2 + start_angle:
-            yield (x + math.cos(a) * r, y + math.sin(a) * r)
+            yield (x + math.cos(a) * radius, y + math.sin(a) * radius)
             a += da
     
 
-    def ngon(self, x, y, r, sides, start_angle = 0.0):
+    def ngon(self, x, y, radius, sides, start_angle = 0.0):
         """
-        Draw a polygon of n sides of equal length.
+        Returns points for a polygon of n sides of equal length.
     
         @param x, y: center position
-        @param r: radius
+        @param radius: radius
         @param sides: number of sides in the polygon
         @param start_angle: rotation of the entire polygon
         """
-        points = self._concat(self._iter_ngon(x, y, r, sides, start_angle))
-        pyglet.graphics.draw(len(points)/2, GL_TRIANGLE_FAN, ('v2f', points))
+        points = self._concat(self._iter_ngon(x, y, radius, sides, start_angle))
+        return points
         
