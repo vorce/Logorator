@@ -101,16 +101,17 @@ class LSysGen(generator.Generator):
         # list of vertices for each entry in self.sys
         self.vs = [None] * len(self.sys)
 
-    def mix(self, other):
-        n = LSysGen()
-        for i in self.seed:
+    @classmethod
+    def mix_of(cls, lsys1, lsys2):
+        new_lsysgen = cls()
+        for i in lsys1.seed:
             if i == '__generator__':
                 continue
-            n.seed[i] = random.gauss((self.seed[i] + other.seed[i]) / 2,
-                                     abs((self.seed[i] - other.seed[i]) / 2))
+            new_lsysgen.seed[i] = random.gauss((lsys1.seed[i] + lsys2.seed[i]) / 2,
+                                     abs((lsys1.seed[i] - lsys2.seed[i]) / 2))
 
-        (ss, se) = self.sys[self.seed['model']]
-        (os, oe) = other.sys[other.seed['model']]
+        (ss, se) = lsys1.sys[lsys1.seed['model']]
+        (os, oe) = lsys2.sys[lsys2.seed['model']]
         nc = {}
         for sc in ss.rules:
             nc[sc] = ss.rules[sc]
@@ -133,12 +134,12 @@ class LSysGen(generator.Generator):
                         ne[senv] = (se[senv] + oe[oenv]) / 2
 
         nlsys = lsys.LSys(ss.axiom + os.axiom, nc, niters)
-        n.sys.append((nlsys, ne))
-        n.vs.append(None)
-        n.seed['model'] = len(n.sys) - 1
-        n.params['model'] = n.g_int_range(len(n.sys)-1)
-        print("New LSys.\naxiom: {0}, rules: {1}, iterations: {2}\n environment: {3}".format(nlsys.axiom, nlsys.rules, nlsys.iters, ne))
-        return n
+        new_lsysgen.sys.append((nlsys, ne))
+        new_lsysgen.vs.append(None)
+        new_lsysgen.seed['model'] = len(new_lsysgen.sys) - 1
+        new_lsysgen.params['model'] = new_lsysgen.g_int_range(len(new_lsysgen.sys)-1)
+        print("New LSys.\naxiom: {0}, rules: {1}, iterations: {2}\new_lsysgen environment: {3}".format(nlsys.axiom, nlsys.rules, nlsys.iters, ne))
+        return new_lsysgen
 
     def render(self):
         if self.seed:
