@@ -15,7 +15,7 @@ class Eventhandler:
         self.click_down_position = None
         self.click_button = None
         self.nclicks = 0
-        self.paused = False
+        self.paused = True
         self.next_seeds = False
         self.multi_logoview = True
         self.selected_view = None
