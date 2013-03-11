@@ -61,6 +61,8 @@ class Eventhandler:
         self.multi_logoview = not self.multi_logoview
         # print("Multi view: " + str(self.multi_logoview))
 
+    def handle_right_click_up(self, event):
+        pass
 
     def handle_s_press(self):
         now = datetime.datetime.now()
