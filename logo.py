@@ -57,7 +57,7 @@ class Logo(list):
         return common_gens
 
 
-    def _mix_generators(self, gen_type, g1s, g2s):
+    def _mix_generators(self, gen_type, logo1_generators, logo2_generators):
         new_gens = []
         i = 0
         (themodule, clazz) = gen_type
@@ -65,11 +65,12 @@ class Logo(list):
         def longest_list(list1, list2):
             return (len(list1) >= len(list2) and list1) or (list2)
         
-        for gen in longest_list(g1s, g2s):
-            if(i > (len(g2s) - 1)):
+        for gen in longest_list(logo1_generators, logo2_generators):
+            if(i > (len(logo2_generators) - 1)):
                 i = 0
+            
             new_gen = getattr(sys.modules[themodule],
-                              clazz).mix_of(gen, g2s[i])  # create a new mix of the same class
+                              clazz).mix_of(gen, logo2_generators[i])  # create a new mix_of of the same class
             new_gens.append(new_gen)
             i += 1
         return new_gens
