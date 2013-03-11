@@ -95,7 +95,6 @@ class LSysGen(generator.Generator):
                        'thickness': self.g_int_span(8, 20),
                        'angle': self.g_int_range(359),
                        'model':self.g_int_range(len(self.sys)-1),
-                       'koko':self.g_int_span(20, 50),
                        }
 
         # list of vertices for each entry in self.sys
@@ -111,15 +110,15 @@ class LSysGen(generator.Generator):
             new_lsysgen.seed[i] = random.gauss((lsys1.seed[i] + lsys2.seed[i]) / 2,
                                      abs((lsys1.seed[i] - lsys2.seed[i]) / 2))
 
-        (ss, se) = lsys1.sys[lsys1.seed['model']]
-        (os, oe) = lsys2.sys[lsys2.seed['model']]
+        (ss, se) = lsys1.sys[lsys1.seed.get('model', 0)]
+        (os, oe) = lsys2.sys[lsys2.seed.get('model', 0)]
         nc = {}
         for sc in ss.rules:
             nc[sc] = ss.rules[sc]
             for oc in os.rules:
                 nc[oc] = os.rules[oc]
                 if sc == oc:
-                    nc[sc] = ss.rules[sc][: len(ss.rules) / 2] + os.rules[oc][len(os.rules) / 2 :]
+                    nc[sc] = ss.rules[sc][:(len(ss.rules) / 2)] + os.rules[oc][(len(os.rules) / 2) :]
                     
         niters = int(random.gauss((ss.iters + os.iters) / 2,
                                   abs((ss.iters - os.iters) / 2)))
@@ -139,8 +138,16 @@ class LSysGen(generator.Generator):
         new_lsysgen.vertices.append(None)
         new_lsysgen.seed['model'] = len(new_lsysgen.sys) - 1
         new_lsysgen.params['model'] = new_lsysgen.g_int_range(len(new_lsysgen.sys)-1)
-        print("New LSys.\naxiom: {0}, rules: {1}, iterations: {2}\new_lsysgen environment: {3}".format(nlsys.axiom, nlsys.rules, nlsys.iters, ne))
+        print("New LSys.\naxiom: {0}, rules: {1}, iterations: {2}\new_lsysgen environment: {3}".format(
+              nlsys.axiom, nlsys.rules, nlsys.iters, ne))
         return new_lsysgen
+
+
+    def get_current_lsystem_vertices(self, model):
+        (lsystem, state) = self.sys[model]
+        lsystem.parse(state, lsystem.commands)
+        return lsystem.verts
+
 
     def render(self):
         if self.seed:
@@ -149,16 +156,15 @@ class LSysGen(generator.Generator):
             
             glColor4ub(int(self.seed['red']), int(self.seed['green']),
                        int(self.seed['blue']), int(self.seed['alpha']))
-           
-            model = self.seed.get('model', 0)
-            (lsystem, state) = self.sys[model]
 
             glRotatef(self.seed['angle'], 0.0, 0.0, 1.0)
-            lsystem.parse(state, lsystem.commands)
-
+            
+            model = self.seed.get('model', 0)
+            
             if self.vertices[model] == None:
+                lsys_verts = self.get_current_lsystem_vertices(model)
                 self.vertices[model] = pyglet.graphics.vertex_list(
-                                    len(lsystem.verts) / 2,
-                                    ('v2f/static', lsystem.verts))
+                                    len(lsys_verts) / 2,
+                                    ('v2f/static', lsys_verts))
             self.vertices[model].draw(GL_LINES)
 

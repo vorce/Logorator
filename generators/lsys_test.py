@@ -10,7 +10,7 @@ class TestLSys(unittest.TestCase):
         ls = self.create_minimal_lsys()
         my_axiom = "axiom"
         
-        command = ls.produce(my_axiom, {})
+        command = ls.produce_command(my_axiom, {})
         
         assert_that(command, is_(my_axiom))
         
@@ -18,9 +18,9 @@ class TestLSys(unittest.TestCase):
     def test_produce_axiom_F_rules_FplusF_should_give_FplusF(self):
         ls = self.create_minimal_lsys()
         my_axiom = "F"
-        my_rules = {"F": "F+F"}
+        my_rules = {my_axiom: "F+F"}
         
-        command = ls.produce(my_axiom, my_rules)
+        command = ls.produce_command(my_axiom, my_rules)
         
         assert_that(command, is_(my_rules[my_axiom]))
 
@@ -30,7 +30,7 @@ class TestLSys(unittest.TestCase):
         my_axiom = "F"
         my_rules = {"F": "F+F"}
         
-        command = ls.produce(ls.produce(my_axiom, my_rules), my_rules)
+        command = ls.produce_command(ls.produce_command(my_axiom, my_rules), my_rules)
         
         assert_that(command, is_("F+F+F+F"))
 
@@ -41,4 +41,4 @@ class TestLSys(unittest.TestCase):
         
         command = ls.evolve(2, my_axiom, my_rules)
         
-        assert_that(command, is_(ls.produce(ls.produce(my_axiom, my_rules), my_rules)))
+        assert_that(command, is_(ls.produce_command(ls.produce_command(my_axiom, my_rules), my_rules)))

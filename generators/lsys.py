@@ -19,7 +19,7 @@ class LSys:
         self.commands = self.evolve(self.iters, axiom, rules)
 
 
-    def produce(self, axiom, rules):
+    def produce_command(self, axiom, rules):
         """
         Produce a new command string from the
         axiom string and the rules applied to it
@@ -38,7 +38,7 @@ class LSys:
         if n == 0:
             return axiom
         else:
-            return self.evolve(n-1, self.produce(axiom, rules), rules)
+            return self.evolve(n-1, self.produce_command(axiom, rules), rules)
 
 
     def parse_command(self, state, cmd, forward_func = None):
@@ -66,7 +66,7 @@ class LSys:
         return s
 
 
-    def parse(self, state, cmds, forward_func = None):
+    def parse(self, state, commands, forward_func = None):
         """
         Parse the whole string of commands in the state
 
@@ -74,11 +74,11 @@ class LSys:
             handles the command and return the resulting state.
         """
         self.verts = []
-        s = state
-        for c in cmds:
-            s = self.parse_command(s, c, forward_func)
+        new_state = state
+        for command in commands:
+            new_state = self.parse_command(new_state, command, forward_func)
         #print("verts: " + str(self.verts))
-        return s
+        return new_state
 
 
     def left(self, state):
