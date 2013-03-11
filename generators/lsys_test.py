@@ -3,8 +3,11 @@ import unittest
 from hamcrest import *
 
 class TestLSys(unittest.TestCase):
+    def create_minimal_lsys(self):
+        return lsys.LSys("", {}, 1)
+    
     def test_produce_any_axiom_with_no_rules_should_give_the_axiom(self):
-        ls = lsys.LSys("", {}, 1)
+        ls = self.create_minimal_lsys()
         my_axiom = "axiom"
         
         command = ls.produce(my_axiom, {})
@@ -13,7 +16,7 @@ class TestLSys(unittest.TestCase):
         
 
     def test_produce_axiom_F_rules_FplusF_should_give_FplusF(self):
-        ls = lsys.LSys("", {}, 1)
+        ls = self.create_minimal_lsys()
         my_axiom = "F"
         my_rules = {"F": "F+F"}
         
@@ -23,7 +26,7 @@ class TestLSys(unittest.TestCase):
 
 
     def test_produce_axiom_F_rules_FplusF_twice_should_give_FplusFplusFplusF(self):
-        ls = lsys.LSys("", {}, 1)
+        ls = self.create_minimal_lsys()
         my_axiom = "F"
         my_rules = {"F": "F+F"}
         
@@ -32,7 +35,7 @@ class TestLSys(unittest.TestCase):
         assert_that(command, is_("F+F+F+F"))
 
     def test_evolve_axiom_F_rules_FplusF_twice_should_give_same_as_produce_twice(self):
-        ls = lsys.LSys("", {}, 1)
+        ls = self.create_minimal_lsys()
         my_axiom = "F"
         my_rules = {"F": "F+F"}
         
