@@ -101,6 +101,7 @@ class LSysGen(generator.Generator):
         # list of vertices for each entry in self.sys
         self.vertices = [None] * len(self.sys)
 
+    # TODO clean me up V - V
     @classmethod
     def mix_of(cls, lsys1, lsys2):
         new_lsysgen = cls()
@@ -157,7 +158,7 @@ class LSysGen(generator.Generator):
 
             if self.vertices[model] == None:
                 self.vertices[model] = pyglet.graphics.vertex_list(
-                                    len(lsystem.verts)/2,
+                                    len(lsystem.verts) / 2,
                                     ('v2f/static', lsystem.verts))
             self.vertices[model].draw(GL_LINES)
 
