@@ -99,7 +99,7 @@ class LSysGen(generator.Generator):
                        }
 
         # list of vertices for each entry in self.sys
-        self.vs = [None] * len(self.sys)
+        self.vertices = [None] * len(self.sys)
 
     @classmethod
     def mix_of(cls, lsys1, lsys2):
@@ -135,7 +135,7 @@ class LSysGen(generator.Generator):
 
         nlsys = lsys.LSys(ss.axiom + os.axiom, nc, niters)
         new_lsysgen.sys.append((nlsys, ne))
-        new_lsysgen.vs.append(None)
+        new_lsysgen.vertices.append(None)
         new_lsysgen.seed['model'] = len(new_lsysgen.sys) - 1
         new_lsysgen.params['model'] = new_lsysgen.g_int_range(len(new_lsysgen.sys)-1)
         print("New LSys.\naxiom: {0}, rules: {1}, iterations: {2}\new_lsysgen environment: {3}".format(nlsys.axiom, nlsys.rules, nlsys.iters, ne))
@@ -150,15 +150,14 @@ class LSysGen(generator.Generator):
                        int(self.seed['blue']), int(self.seed['alpha']))
            
             model = self.seed.get('model', 0)
-            (ls, state) = self.sys[model]
+            (lsystem, state) = self.sys[model]
 
             glRotatef(self.seed['angle'], 0.0, 0.0, 1.0)
-            ls.parse(state, ls.commands)
+            lsystem.parse(state, lsystem.commands)
 
-            if self.vs[model] == None:
-                self.vs[model] = pyglet.graphics.vertex_list(
-                                    len(ls.verts)/2,
-                                    ('v2f/static',
-                                    ls.verts))
-            self.vs[model].draw(GL_LINES)
+            if self.vertices[model] == None:
+                self.vertices[model] = pyglet.graphics.vertex_list(
+                                    len(lsystem.verts)/2,
+                                    ('v2f/static', lsystem.verts))
+            self.vertices[model].draw(GL_LINES)
 

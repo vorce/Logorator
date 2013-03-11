@@ -6,8 +6,6 @@ designed to be used by logorator generators
 
 https://en.wikipedia.org/wiki/L-system
 
-TODO: tests
-
 Joel Carlbark 2012
 """
 
@@ -20,15 +18,17 @@ class LSys:
         self.iters = int(iterations)
         self.commands = self.evolve(self.iters, axiom, rules)
 
+
     def produce(self, axiom, rules):
         """
         Produce a new command string from the
         axiom string and the rules applied to it
         """
-        c = ""
+        command = ""
         for i in axiom:
-            c = c + rules.get(i, i)
-        return c
+            command = command + rules.get(i, i)
+        return command
+
 
     def evolve(self, n, axiom, rules):
         """
@@ -39,6 +39,7 @@ class LSys:
             return axiom
         else:
             return self.evolve(n-1, self.produce(axiom, rules), rules)
+
 
     def parse_command(self, state, cmd, forward_func = None):
         """
@@ -64,6 +65,7 @@ class LSys:
             s = state
         return s
 
+
     def parse(self, state, cmds, forward_func = None):
         """
         Parse the whole string of commands in the state
@@ -78,6 +80,7 @@ class LSys:
         #print("verts: " + str(self.verts))
         return s
 
+
     def left(self, state):
         """
         Turn left d degrees.
@@ -88,6 +91,7 @@ class LSys:
                 "d":(state.get("d", math.radians(90))),
                 "s":state.get("s", 10)}
 
+
     def right(self, state):
         """
         Turn right d degrees
@@ -97,6 +101,7 @@ class LSys:
                 "a":(state.get("a") + state.get("d")),
                 "d":(state.get("d", math.radians(90))),
                 "s":state.get("s", 10)}
+
 
     def forward(self, state):
         """
@@ -112,17 +117,20 @@ class LSys:
         self.verts.append(state.get("y"))
         self.verts.append(x)
         self.verts.append(y)
+        
         return {"x":x,
                 "y":y,
                 "a":a,
                 "s":s,
                 "d":d}
 
+
     def pop(self, state):
         """
         Pop a state from the stack
         """
         return self.stack.pop()
+
 
     def push(self, state):
         """
