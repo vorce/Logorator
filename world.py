@@ -2,7 +2,7 @@ from pyglet.gl import *
 
 import sys
 
-#sys.path.insert(0, 'generators')
+sys.path.insert(0, 'generators')
 import polygen
 import textgen
 import lsysgen
