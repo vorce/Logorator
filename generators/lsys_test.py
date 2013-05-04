@@ -41,4 +41,7 @@ class TestLSys(unittest.TestCase):
         
         command = ls.evolve(2, my_axiom, my_rules)
         
-        assert_that(command, is_(ls.produce_command(ls.produce_command(my_axiom, my_rules), my_rules)))
+        assert_that(command,
+                    is_(ls.produce_command(
+                                           ls.produce_command(my_axiom, my_rules),
+                                           my_rules)))

@@ -25,11 +25,14 @@ class TestLogo(unittest.TestCase):
         l1 = self.create_logo([ polygen.PolyGen() ])
         l2 = self.create_logo([ polygen.PolyGen() ])
         
-        l3 = Logo.mix_of(l1, l2)
+        mixed = Logo.mix_of(l1, l2)
         
-        assert_that(len(l3), is_(1))
-        assert_that(l3[0], is_(instance_of(polygen.PolyGen)))
-        assert_that(l3[0], is_not(is_in([l1, l2])))
+        assert_that("Mixed logo does not have one generator",
+                    len(mixed), is_(1))
+        assert_that("Mixed logo's first generator is not a PolyGen",
+                    mixed[0], is_(instance_of(polygen.PolyGen)))
+        assert_that("Mixed logo's first generator is one of the original PolyGens",
+                    mixed[0], is_not(is_in([l1, l2])))
         
     def test_mix_of_two_logos_with_one_different_gen_each_should_contain_two_unchanged_gens(self):
         poly_gen = polygen.PolyGen()
@@ -49,7 +52,7 @@ class TestLogo(unittest.TestCase):
         l1 = self.create_logo([ poly_gen, text_gen1 ])
         l2 = self.create_logo([ text_gen2 ])
         
-        l3 = Logo.mix_of(l1, l2)
+        mixed = Logo.mix_of(l1, l2)
         
         # Many asserts, but we want to be strict here
         # The mixed Logo shall:
@@ -57,10 +60,14 @@ class TestLogo(unittest.TestCase):
         # * Contain the original poly_gen.
         # * Not contain any of the original text_gens
         # * Contain one TextGen
-        assert_that(len(l3), is_(2))
-        assert_that(l3, has_item(poly_gen))
-        assert_that(l3, is_not(has_items([text_gen1, text_gen2])))
-        assert_that(l3, has_item(instance_of(textgen.TextGen)))
+        assert_that("Mixed Logo does not have two generators",
+                    len(mixed), is_(2))
+        assert_that("Mixed Logo does not contain the original PolyGen",
+                    mixed, has_item(poly_gen))
+        assert_that("Mixed Logo contains the original TextGens",
+                    mixed, is_not(has_items([text_gen1, text_gen2])))
+        assert_that("Mixed Logo does not contain a TextGen",
+                    mixed, has_item(instance_of(textgen.TextGen)))
     
     # TODO Fix my name
     def test_multiple_generator_logos_mixed_should_adhere_to_rules(self):
